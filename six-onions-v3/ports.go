@@ -21,6 +21,7 @@ var allowedPorts = []int{
 	53,   // domain
 	77,   // priv-rjs
 	79,   // finger
+	80,   // http
 	87,   // ttylink
 	95,   // supdup
 	101,  // hostriame
@@ -40,6 +41,7 @@ var allowedPorts = []int{
 	143,  // imap2
 	179,  // BGP
 	389,  // ldap
+	443,  // https
 	465,  // smtp+ssl
 	512,  // print / exec
 	513,  // login
