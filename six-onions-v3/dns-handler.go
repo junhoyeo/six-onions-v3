@@ -11,7 +11,7 @@ import (
 	"github.com/miekg/dns"
 )
 
-func dnsHandler() {
+func dnsHandler(db *InMemoryDB) {
 	dnsbase := flag.String("domain", "tor6.flm.me.uk", "the domain you want to top on")
 	listen := flag.String("listen", "127.0.0.1:553", "the port to listen on")
 	flag.Parse()

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func tcpRequestHandler() {
+func tcpRequestHandler(db *InMemoryDB) {
 	tport := flag.Int("transport", 1337,
 		"the port that iptables will be redirecting connections to")
 	flag.Parse()
