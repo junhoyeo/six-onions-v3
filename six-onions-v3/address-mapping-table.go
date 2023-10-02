@@ -8,10 +8,9 @@ import (
 
 // AddressMappingTable holds the mappings between OnionV3 addresses and IPv6 addresses.
 type AddressMappingTable struct {
-	data        map[string]string // OnionV3 to IPv6 mapping
-	reverseData map[string]string // IPv6 to OnionV3 mapping
-	mu          sync.RWMutex
-	lastIPv6    [16]byte
+	data     map[string]string // IPv6 to OnionV3 mapping
+	mu       sync.RWMutex
+	lastIPv6 [16]byte
 }
 
 // NewAddressMappingTable initializes a new AddressMappingTable instance.
@@ -20,19 +19,17 @@ func NewAddressMappingTable() *AddressMappingTable {
 	initialIPv6 := [16]byte{0x2a, 0x0c, 0x2f, 0x07, 0xFE, 0xD5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	return &AddressMappingTable{
-		data:        make(map[string]string),
-		reverseData: make(map[string]string),
-		lastIPv6:    initialIPv6,
+		data:     make(map[string]string),
+		lastIPv6: initialIPv6,
 	}
 }
 
-// Set adds a mapping between the provided OnionV3 and IPv6 addresses.
-func (db *AddressMappingTable) Set(OnionV3, IPv6 string) {
+// Set adds a mapping between the provided IPv6 and OnionV3 addresses.
+func (db *AddressMappingTable) Set(IPv6, OnionV3 string) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	db.data[OnionV3] = IPv6
-	db.reverseData[IPv6] = OnionV3
+	db.data[IPv6] = OnionV3
 }
 
 // NextIPv6 generates the next IPv6 address sequentially.
@@ -57,6 +54,6 @@ func (db *AddressMappingTable) GetByIPv6(IPv6 string) (OnionV3 string, ok bool) 
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	OnionV3, ok = db.reverseData[IPv6]
+	OnionV3, ok = db.data[IPv6]
 	return
 }
