@@ -1,7 +1,7 @@
 package main
 
 func main() {
-	db := NewInMemoryDB()
+	db := NewAddressMappingTable()
 
 	go dnsHandler(db)
 	go tcpRequestHandler(db)

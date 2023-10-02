@@ -11,7 +11,7 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-func tcpRequestHandler(db *InMemoryDB) {
+func tcpRequestHandler(db *AddressMappingTable) {
 	tport := flag.Int("transport", 1337,
 		"the port that iptables will be redirecting connections to")
 	flag.Parse()
@@ -41,7 +41,7 @@ func tcpRequestHandler(db *InMemoryDB) {
 	}
 }
 
-func handleTCPConn(c *net.TCPConn, db *InMemoryDB) {
+func handleTCPConn(c *net.TCPConn, db *AddressMappingTable) {
 	// first, let's recover the address
 	tc, fd, err := realServerAddress(c)
 	defer c.Close()
