@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -10,14 +9,15 @@ import (
 	"github.com/miekg/dns"
 )
 
-func dnsHandler(db *AddressMappingTable) {
-	dnsbase := flag.String("domain", "tor6.flm.me.uk", "the domain you want to top on")
-	listen := flag.String("listen", "127.0.0.1:553", "the port to listen on")
-	flag.Parse()
+func dnsHandler(cfg *Config, db *AddressMappingTable) {
+	log.Printf("listening on %s for %s", cfg.DnsListen, cfg.Domain)
 
-	listens, err := net.ListenPacket("udp4", *listen)
+	// how do we override the dnsbase?
+	// ./six-onions-v3 -domain=tor6.flm.me.uk -listen=
+
+	listens, err := net.ListenPacket("udp4", cfg.DnsListen)
 	if err != nil {
-		log.Fatalf("failed to listen on UDP %s / %s", *listen, err.Error())
+		log.Fatalf("failed to listen on UDP %s / %s", cfg.DnsListen, err.Error())
 	}
 
 	for {
@@ -38,8 +38,8 @@ func dnsHandler(db *AddressMappingTable) {
 
 		iqn := strings.ToLower(inmsg.Question[0].Name)
 
-		if !strings.Contains(iqn, *dnsbase) {
-			log.Printf("question is not for us '%s' vs expected '%s'", iqn, *dnsbase)
+		if !strings.Contains(iqn, cfg.Domain) {
+			log.Printf("question is not for us '%s' vs expected '%s'", iqn, cfg.Domain)
 			continue
 		}
 
@@ -48,7 +48,7 @@ func dnsHandler(db *AddressMappingTable) {
 		iqn = strings.ToUpper(inmsg.Question[0].Name)
 
 		queryname := strings.Replace(
-			iqn, fmt.Sprintf(".%s.", strings.ToUpper(*dnsbase)), "", 1)
+			iqn, fmt.Sprintf(".%s.", strings.ToUpper(cfg.Domain)), "", 1)
 
 		// Generate a new IPv6 address
 		newIPv6 := db.NextIPv6()

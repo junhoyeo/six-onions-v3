@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -11,12 +10,8 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-func tcpRequestHandler(db *AddressMappingTable) {
-	tport := flag.Int("transport", 1337,
-		"the port that iptables will be redirecting connections to")
-	flag.Parse()
-
-	la, _ := net.ResolveTCPAddr("tcp6", fmt.Sprintf("[::]:%d", *tport))
+func tcpRequestHandler(cfg *Config, db *AddressMappingTable) {
+	la, _ := net.ResolveTCPAddr("tcp6", fmt.Sprintf("[::]:%d", cfg.Transport))
 	l, err := net.ListenTCP("tcp6", la)
 	if err != nil {
 		log.Fatalf("Unable to listen on the transparent port %s",
