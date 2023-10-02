@@ -32,14 +32,6 @@ func (db *InMemoryDB) Set(OnionV3Address, IPv6 string) {
 	db.reverseData[IPv6] = OnionV3Address
 }
 
-func (db *InMemoryDB) GetByOnionV3Address(OnionV3Address string) (string, bool) {
-	db.mu.RLock()
-	defer db.mu.RUnlock()
-
-	IPv6, ok := db.data[OnionV3Address]
-	return IPv6, ok
-}
-
 func (db *InMemoryDB) NextIPv6() net.IP {
 	db.mu.Lock()
 	defer db.mu.Unlock()
