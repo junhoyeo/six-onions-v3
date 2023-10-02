@@ -19,7 +19,7 @@ func main() {
 	select {} // Block forever to keep the program running
 }
 
-func handleConn(c *net.TCPConn) {
+func handleTCPConn(c *net.TCPConn) {
 	// first, let's recover the address
 	tc, fd, err := realServerAddress(c)
 	defer c.Close()

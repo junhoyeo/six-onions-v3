@@ -34,6 +34,6 @@ func tcpRequestHandler(db *InMemoryDB) {
 		}
 		failurecount = 0
 
-		go handleConn(c)
+		go handleTCPConn(c)
 	}
 }
