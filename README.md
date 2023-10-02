@@ -1,5 +1,5 @@
 ## six-onions-v3
-Like [six-onions](https://github.com/benjojo/six-onions), but with V3 onion addresses.
+Like [six-onions](https://github.com/benjojo/six-onions), but with V3 Onion addresses.
 
 > ## six-onions
 > Like Tor2Web, but not just HTTP ( using IPv6 )
