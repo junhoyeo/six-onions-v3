@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base32"
 	"flag"
 	"fmt"
 	"io"
@@ -53,9 +52,15 @@ func handleTCPConn(c *net.TCPConn, db *InMemoryDB) {
 		return
 	}
 
-	toraddr := tc.IP[6:]
-	toronionaddr :=
-		fmt.Sprintf("%s.onion", base32.StdEncoding.EncodeToString(toraddr))
+	// Convert the IP part to string, as your DB uses string keys and values
+	ipStr := tc.IP.String()
+	// Lookup the OnionV3Address from the DB using the IP address as the key
+	onionV3Address, ok := db.GetByIPv6(ipStr)
+	if !ok {
+		log.Printf("No OnionV3Address found for IP: %s", ipStr)
+		return
+	}
+	toronionaddr := fmt.Sprintf("%s.onion", onionV3Address)
 
 	if !isAllowedPort(tc.Port) {
 		log.Printf("Disallowed connection from %s to %s:%d due to port block",

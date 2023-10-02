@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base32"
 	"flag"
 	"fmt"
 	"log"
@@ -51,28 +50,12 @@ func dnsHandler(db *InMemoryDB) {
 		queryname := strings.Replace(
 			iqn, fmt.Sprintf(".%s.", strings.ToUpper(*dnsbase)), "", 1)
 
-		b32, err := base32.StdEncoding.DecodeString(queryname)
-
-		if err != nil || len(b32) != 10 {
-			outmsg.Id = inmsg.Id
-			outmsg = inmsg.SetReply(outmsg)
-			outmsg.Rcode = dns.RcodeServerFailure
-
-			outputb, err := outmsg.Pack()
-
-			if err != nil {
-				log.Printf("unable to pack response to thing")
-				continue
-			}
-
-			listens.WriteTo(outputb, inaddr)
-			continue
-		}
-
-		barr := make([]byte, 0)
-		barr = append(barr, 0x2a, 0x0c, 0x2f, 0x07, 0xFE, 0xD5)
-		barr = append(barr, b32...)
-		bip := net.IP(barr)
+		// Generate a new IPv6 address
+		newIPv6 := db.NextIPv6()
+		// Convert net.IP to string to store in the DB
+		newIPv6Str := newIPv6.String()
+		// Store in the database
+		db.Set(queryname, newIPv6Str)
 
 		outmsg.Id = inmsg.Id
 		outmsg = inmsg.SetReply(outmsg)
@@ -84,7 +67,7 @@ func dnsHandler(db *InMemoryDB) {
 				Rrtype: dns.TypeAAAA,
 				Class:  dns.ClassINET,
 				Ttl:    2147483646},
-			AAAA: bip,
+			AAAA: newIPv6,
 		}
 		outputb, err := outmsg.Pack()
 
